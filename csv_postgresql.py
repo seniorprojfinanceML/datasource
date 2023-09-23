@@ -20,7 +20,7 @@ db_params = {
 }
 
 # CSV file path
-file_path = '2011-01-01_2023-09-21_google_amazon.csv'
+file_path = 'resource\\2011-01-01_2023-09-21_google_amazon.csv'
 
 # Assume that the CSV columns are in the order: stockname, datetime, open, close, high, low, volume
 csv_columns = ['stockname', 'datetime', 'open', 'close', 'high', 'low', 'volume']
