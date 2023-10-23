@@ -18,7 +18,7 @@ stocks = ['AMZN', 'CSCO', 'SLB', 'PANW']
 
 # Define the start and end dates
 start_date = '2011-01-01'
-end_date = '2023-09-21'
+end_date = '2023-10-22'
 
 # Initialize a list to hold the stock data
 stock_data = []
