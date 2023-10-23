@@ -8,3 +8,11 @@ DATABASE_PASSWORD = config["DATABASE_PASSWORD"]
 DATABASE_HOST = config["DATABASE_URL"]
 DATABASE_NAME = config["DATABASE_NAME"]
 DATABASE_URL = f"postgresql://{DATABASE_USERNAME}:{DATABASE_PASSWORD}@{DATABASE_HOST}:5432/{DATABASE_NAME}"
+
+db_params = {
+    'dbname': os.getenv('DATABASE_DBNAME'),
+    'user': os.getenv('DATABASE_USERNAME'),
+    'password': os.getenv('DATABASE_PASSWORD'),
+    'host': os.getenv('DATABASE_HOST'),
+    'port': os.getenv('DATABASE_PORT')
+}
