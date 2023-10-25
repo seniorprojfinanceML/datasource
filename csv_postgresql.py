@@ -21,7 +21,7 @@ db_params = {
 }
 
 # CSV file path
-file_path = 'resource\\2011-01-01_2023-10-22_google_amazon.csv'
+file_path = 'resource\\2021-01-01_2023-10-22_google_amazon.csv'
 
 # Assume that the CSV columns are in the order: stockname, datetime, open, close, high, low, volume
 csv_columns = ['stockname', 'datetime', 'open', 'close', 'high', 'low', 'volume']
@@ -32,7 +32,7 @@ try:
     conn = psycopg2.connect(**db_params)
     cur = conn.cursor()
 
-    table_name = "stock_data"
+    table_name = "stock_data_fortest"
 
     create_table_query = cm.get_create_table_query(table_name)
     cur.execute(create_table_query)
