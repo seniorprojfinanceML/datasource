@@ -99,6 +99,9 @@ async def etl_stock():
 
 
 async def etl_crypto():
+    table_name = 'etl-crypto'
+    dynamodb_resource = boto3.resource('dynamodb')
+    table = dynamodb_resource.Table(table_name)
     db = databases.Database(config.DATABASE_URL)
     await db.connect()
     query = """WITH Ranked AS (
@@ -112,11 +115,31 @@ async def etl_crypto():
     results = await db.fetch_all(query = query)
     data = []
     for result in results:
-        # print(result)
         data.append(dict(result))
-        # print(dict(result))
-    # print(data)
     await db.disconnect()
+    
+    df = pd.DataFrame(data)
+    # print(df)
+    insert_df = pd.DataFrame()
+    insert_df['simple_moving_average'] = df.groupby("currency").mean()["close"]
+    insert_df['insert_time'] = str(list(df.sort_values(by='time',ascending=False ,inplace=False)["time"])[0])
+    insert_df.reset_index(inplace=True)
+    data_list = insert_df.to_dict(orient='records')
+    insert_list = []
+    for data_dict in data_list:
+        insert_dict = {
+            "insert_datetime": str(data_dict["insert_time"]),
+            "currencyname": str(data_dict["currency"]),
+            "simple_moving_average": str(data_dict["simple_moving_average"]),
+        }
+        insert_list.append(insert_dict)
+    
+    # print(insert_list)
+    with table.batch_writer() as batch:
+        for item in insert_list:
+            batch.put_item(Item=item)
+            pass
+    
     ### Might be useful when adding multiple indicators at the same time
     ##  Will choose the method that is more efficient later
     # data_dict = dict()
@@ -138,18 +161,8 @@ async def etl_crypto():
     #     output_json = {key:{time:{"ma":mean}}}
     #     # print(value)
     #     print(output_json)
-    
-    ### Average using pandas - will try this as well since it might be faster
-    df = pd.DataFrame(data)
-    
-    insert_df = pd.DataFrame()
-    insert_df['simple_moving_average'] = df.groupby("currency").mean()["close"]
-    insert_df['simple_moving_average'] = insert_df['simple_moving_average'].apply(decimal.Decimal)
-    insert_df['time'] = str(df["time"][0])
-    insert_df.reset_index(inplace=True)
-    print(insert_df.to_dict(orient='records'))
 
 if __name__ == "__main__":
-    data = asyncio.run(api())
-    asyncio.run(insert(data))
-    # asyncio.run(etl_stock())
+    # data = asyncio.run(api())
+    # asyncio.run(insert(data))
+    asyncio.run(etl_crypto())
