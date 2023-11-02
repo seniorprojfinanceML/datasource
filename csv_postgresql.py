@@ -3,6 +3,7 @@ import psycopg2
 from psycopg2 import sql
 from dotenv import load_dotenv
 import os
+import common as cm
 
 # Specify the path to your db.env file
 env_path = './db.env'  # Adjust the path if your file is located elsewhere
@@ -20,7 +21,7 @@ db_params = {
 }
 
 # CSV file path
-file_path = 'resource\\2011-01-01_2023-09-21_google_amazon.csv'
+file_path = 'resource\\2021-01-01_2023-10-22_google_amazon.csv'
 
 # Assume that the CSV columns are in the order: stockname, datetime, open, close, high, low, volume
 csv_columns = ['stockname', 'datetime', 'open', 'close', 'high', 'low', 'volume']
@@ -31,20 +32,9 @@ try:
     conn = psycopg2.connect(**db_params)
     cur = conn.cursor()
 
-    table_name = "stock_data"
+    table_name = "stock_data_fortest"
 
-    create_table_query = f"""
-    CREATE TABLE IF NOT EXISTS {table_name} (
-        id SERIAL PRIMARY KEY,
-        stockname VARCHAR(255),
-        datetime TIMESTAMP,
-        open_price FLOAT DEFAULT NULL,
-        close_price FLOAT DEFAULT NULL,
-        high_price FLOAT DEFAULT NULL,
-        low_price FLOAT DEFAULT NULL,
-        volume INTEGER DEFAULT NULL
-    )
-    """
+    create_table_query = cm.get_create_table_query(table_name)
     cur.execute(create_table_query)
 
     with open(file_path, 'r') as file:

@@ -4,6 +4,7 @@ import psycopg2
 from dotenv import load_dotenv
 from datetime import datetime
 from psycopg2 import sql
+import common as cm
 
 # Load the db.env file
 load_dotenv(dotenv_path='db.env')
@@ -28,18 +29,8 @@ try:
     cur = conn.cursor()
     
     # Create table if not exists
-    create_table_query = f"""
-    CREATE TABLE IF NOT EXISTS {table_name} (
-        id SERIAL PRIMARY KEY,
-        stockname VARCHAR(255),
-        datetime TIMESTAMP,
-        open_price FLOAT,
-        close_price FLOAT,
-        high_price FLOAT,
-        low_price FLOAT,
-        volume INTEGER
-    )
-    """
+    create_table_query = cm.get_create_table_query(table_name)
+
     cur.execute(create_table_query)
     
     # Retrieve stock data from Alpha Vantage using GLOBAL_QUOTE endpoint and insert into the database

@@ -14,11 +14,11 @@ load_dotenv(dotenv_path=env_path)
 api_key = os.getenv('ALPHAVANTAGE_API_KEY')
 
 # Define the list of stock symbols
-stocks = ['AMZN', 'CSCO', 'SLB', 'PANW']
+stocks = ['AMZN', 'CSCO']
 
 # Define the start and end dates
-start_date = '2011-01-01'
-end_date = '2023-09-21'
+start_date = '2021-01-01'
+end_date = '2023-10-22'
 
 # Initialize a list to hold the stock data
 stock_data = []
