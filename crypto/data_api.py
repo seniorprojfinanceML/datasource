@@ -67,11 +67,12 @@ async def etl_stock():
         FROM Ranked
         WHERE row_num <= 5;"""
     results = await db.fetch_all(query = query)
+    # results = db.fetch_all(query = query)
     data = []
     for result in results:
         data.append(dict(result))
     await db.disconnect()
-    
+    # db.disconnect()
     df = pd.DataFrame(data)
     insert_df = pd.DataFrame()
     insert_df['simple_moving_average'] = df.groupby("stockname").mean()["close_price"]
@@ -96,7 +97,26 @@ async def etl_stock():
             batch.put_item(Item=item)
             # pass
     
-
+async def average_recent_crypto():
+    query = """WITH ranked_data AS (
+        SELECT currency, close, time,
+        ROW_NUMBER() OVER (PARTITION BY currency ORDER BY time DESC) AS row_num
+        FROM crypto
+    )
+    SELECT currency, MAX(time) AS time, AVG(close) AS average_data
+    FROM ranked_data
+    WHERE row_num <= 5
+    GROUP BY currency;"""
+    db = databases.Database(config.DATABASE_URL)
+    await db.connect()
+    results = await db.fetch_all(query = query)
+    data = []
+    for result in results:
+        data.append(dict(result))
+    print(data)
+    await db.disconnect()
+    return data
+    
 
 async def etl_crypto():
     table_name = 'etl-crypto'
@@ -138,7 +158,8 @@ async def etl_crypto():
     with table.batch_writer() as batch:
         for item in insert_list:
             batch.put_item(Item=item)
-            pass
+    
+    
     
     ### Might be useful when adding multiple indicators at the same time
     ##  Will choose the method that is more efficient later
@@ -165,4 +186,5 @@ async def etl_crypto():
 if __name__ == "__main__":
     # data = asyncio.run(api())
     # asyncio.run(insert(data))
-    asyncio.run(etl_crypto())
+    # asyncio.run(etl_crypto())
+    asyncio.run(average_recent_crypto())
