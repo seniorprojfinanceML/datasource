@@ -4,7 +4,7 @@ import psycopg2
 from dotenv import load_dotenv
 from datetime import datetime
 from psycopg2 import sql
-import common as cm
+import db_code.common as cm
 
 # Load the db.env file
 load_dotenv(dotenv_path='db.env')
