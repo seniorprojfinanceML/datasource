@@ -1,0 +1,10 @@
+CREATE TABLE if not exists crypto_ld_test (
+    currency TEXT NOT NULL,
+    time TIMESTAMP WITHOUT TIME ZONE NOT NULL,
+    open DOUBLE PRECISION NOT NULL,
+    close DOUBLE PRECISION NOT NULL,
+    low DOUBLE PRECISION NOT NULL,
+    high DOUBLE PRECISION NOT NULL,
+    volume DOUBLE PRECISION NOT NULL,
+    PRIMARY KEY (currency, time)
+);
